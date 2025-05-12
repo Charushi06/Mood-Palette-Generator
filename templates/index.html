@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mood-Based Color Palette Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Mood Palette Generator 🎨</h1>
+        <select id="moodSelect">
+            <option value="">-- Select a Mood --</option>
+            <option value="calm">Calm</option>
+            <option value="energetic">Energetic</option>
+            <option value="romantic">Romantic</option>
+            <option value="mysterious">Mysterious</option>
+        </select>
+        <button onclick="getPalette()">Generate Palette</button>
+
+        <div id="paletteContainer"></div>
+    </div>
+
+    <script>
+        async function getPalette() {
+            const mood = document.getElementById("moodSelect").value;
+            const res = await fetch("/get_palette", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ mood: mood })
+            });
+
+            const data = await res.json();
+            const paletteContainer = document.getElementById("paletteContainer");
+            paletteContainer.innerHTML = '';
+
+            data.palette.forEach(color => {
+                const colorBox = document.createElement("div");
+                colorBox.className = "color-box";
+                colorBox.style.backgroundColor = color;
+                colorBox.innerText = color;
+                paletteContainer.appendChild(colorBox);
+            });
+        }
+    </script>
+</body>
+</html>
